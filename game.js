@@ -1,4 +1,10 @@
 // ==============================================================
+// Control Game
+// ==============================================================
+let gameOver = false;
+let startGame = true;
+
+// ==============================================================
 // Board
 // ==============================================================
 let board;
@@ -18,7 +24,7 @@ const playerHeight = 10;
 const playerBorderRadius = 2;
 const playerVelocityX = 10;
 
-const player = {
+let player = {
   x: boardWidth / 2 - playerWidth / 2,
   y: boardHeight - playerHeight - 5,
   width: playerWidth,
@@ -31,15 +37,12 @@ const player = {
 // Ball
 // ==============================================================
 const ballRadius = 5;
-const ballVelocityX = 4;
-const ballVelocityY = 2;
-
-const ballVelocity = [2.0, 1.0];
+const ballVelocity = [2.5, 1.0];
 const ballPosition = [boardWidth / 2.0, boardHeight / 2.0];
 // ΔT = Variação do tempo
-const deltaT = 1.2;
+const deltaT = 1.5;
 
-const ball = {
+let ball = {
   x: boardWidth / 2,
   y: boardHeight / 2,
   radius: ballRadius,
@@ -53,14 +56,15 @@ let blockArray = [];
 let blockWidth = 45;
 let blockHeight = 11;
 let blockColumns = 10;
-let blockRows = 7;
+let blockRows = 8;
 let blockMaxRows = 10;
 let blockCount = 0;
 
-const blockX = 15;
-const blockY = 45;
+const blockX = 2;
+const blockY = 40;
 
 const colors = [
+  "#FF1493",
   "#DC143C",
   "#FF4500",
   "#FFD700",
@@ -73,8 +77,11 @@ const colors = [
 // ==============================================================
 // Game
 // ==============================================================
-window.onload = function () {
+window.onload = initGame;
+
+function initGame() {
   board = document.getElementById("board");
+  board.style.display = "inline";
   board.height = boardHeight;
   board.width = boardWidth;
 
@@ -87,12 +94,22 @@ window.onload = function () {
 
   requestAnimationFrame(updateFrame);
   document.addEventListener("mousemove", movePlayer);
+  document.addEventListener("keydown", resetGame);
 
   // Blocks
   createBlocks();
-};
+}
 
 function updateFrame() {
+  if (gameOver) return;
+
+  if (startGame) {
+    context.fillStyle = "white";
+    context.font = "20px sans-serif";
+    context.fillText('Press "space" to start the game.', 90, 400);
+    return;
+  }
+
   requestAnimationFrame(updateFrame);
   context.clearRect(0, 0, board.width, board.height);
   context.drawImage(background, 0, 0);
@@ -125,6 +142,9 @@ function updateFrame() {
     ball.velocity = reflection(ball.velocity, normal);
   } else if (ball.y + ball.radius >= boardHeight) {
     // Game over
+    context.font = "20px sans-serif";
+    context.fillText('Game Over. Press "space" to restart.', 90, 400);
+    gameOver = true;
   }
 
   // Check player colision
@@ -203,8 +223,8 @@ function createBlocks() {
   for (let c = 0; c < blockColumns; c++) {
     for (let r = 0; r < blockRows; r++) {
       let block = {
-        x: blockX + c * blockWidth + c * 3,
-        y: blockY + r * blockHeight + r * 3,
+        x: blockX + c * blockWidth + c * 5,
+        y: blockY + r * blockHeight + r * 5,
         width: blockWidth,
         height: blockHeight,
         break: false,
@@ -214,6 +234,36 @@ function createBlocks() {
     }
   }
   blockCount = blockArray.length;
+}
+
+function resetGame(event) {
+  if (event.code == "Space") {
+    if (gameOver) {
+      gameOver = false;
+
+      player = {
+        x: boardWidth / 2 - playerWidth / 2,
+        y: boardHeight - playerHeight - 5,
+        width: playerWidth,
+        height: playerHeight,
+        borderRadius: playerBorderRadius,
+        velocityX: playerVelocityX,
+      };
+
+      ball = {
+        x: boardWidth / 2,
+        y: boardHeight / 2,
+        radius: ballRadius,
+        velocity: ballVelocity,
+      };
+
+      blockArray = [];
+      initGame();
+    } else if (startGame) {
+      startGame = false;
+      initGame();
+    }
+  }
 }
 
 /**

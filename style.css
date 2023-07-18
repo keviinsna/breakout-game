@@ -1,8 +1,18 @@
 body {
-    margin-top: 70px;
+    margin-top: 40px;
     text-align: center;
 }
 
 #board {
     background-color: black;
+}
+
+#play {
+    color: lightgreen;
+    margin: 20px
+}
+
+#play:hover {
+    cursor: pointer;
+    color: green;
 }
