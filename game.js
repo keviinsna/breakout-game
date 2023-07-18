@@ -25,8 +25,7 @@ const player = {
 // ==============================================================
 // Ball
 // ==============================================================
-const ballWidth = 10;
-const ballHeight = 10;
+const ballRadius = 5;
 const ballVelocityX = 4;
 const ballVelocityY = 2;
 
@@ -38,8 +37,7 @@ const deltaT = 1.2;
 const ball = {
   x: boardWidth / 2,
   y: boardHeight / 2,
-  width: ballWidth,
-  height: ballHeight,
+  radius: ballRadius,
   velocity: ballVelocity,
 };
 
@@ -90,16 +88,18 @@ function updateFrame() {
   ball.x += ball.velocity[0] * deltaT;
   ball.y += ball.velocity[1] * deltaT;
 
-  context.fillRect(ball.x, ball.y, ball.width, ball.height);
+  context.beginPath();
+  context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
+  context.fill();
 
   // Check board colisions
-  if (ball.y <= 0) {
+  if (ball.y - ball.radius <= 0) {
     const normal = [0.0, 1.0];
     ball.velocity = reflection(ball.velocity, normal);
-  } else if (ball.x <= 0 || ball.x + ball.width >= boardWidth) {
+  } else if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= boardWidth) {
     const normal = [1.0, 0.0];
     ball.velocity = reflection(ball.velocity, normal);
-  } else if (ball.y + ball.height >= boardHeight) {
+  } else if (ball.y + ball.radius >= boardHeight) {
     // Game over
   }
 
@@ -144,27 +144,32 @@ function movePlayer(event) {
 
 function detectColision(ball, block) {
   return (
-    ball.x < block.x + block.width &&
-    ball.x + ball.width > block.x &&
-    ball.y < block.y + block.height &&
-    ball.y + ball.height > block.y
+    ball.x - ball.radius < block.x + block.width &&
+    ball.x + ball.radius > block.x &&
+    ball.y - ball.radius < block.y + block.height &&
+    ball.y + ball.radius > block.y
   );
 }
 
 function topColision(ball, block) {
-  return detectColision(ball, block) && ball.y + ball.height >= block.y;
+  return detectColision(ball, block) && ball.y + ball.radius >= block.y;
 }
 
 function bottomColision(ball, block) {
-  return detectColision(ball, block) && ball.y <= block.y + block.height;
+  return (
+    detectColision(ball, block) &&
+    ball.y - ball.radius <= block.y + block.height
+  );
 }
 
 function leftColision(ball, block) {
-  return detectColision(ball, block) && ball.x + ball.width >= block.x;
+  return detectColision(ball, block) && ball.x + ball.radius >= block.x;
 }
 
 function rightColision(ball, block) {
-  return detectColision(ball, block) && ball.x <= block.x + block.width;
+  return (
+    detectColision(ball, block) && ball.x - ball.radius <= block.x + block.width
+  );
 }
 
 function createBlocks() {
