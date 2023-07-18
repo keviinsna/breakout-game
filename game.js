@@ -12,6 +12,7 @@ const boardHeight = 500;
 // ==============================================================
 const playerWidth = 80;
 const playerHeight = 10;
+const playerBorderRadius = 2;
 const playerVelocityX = 10;
 
 const player = {
@@ -19,6 +20,7 @@ const player = {
   y: boardHeight - playerHeight - 5,
   width: playerWidth,
   height: playerHeight,
+  borderRadius: playerBorderRadius,
   velocityX: playerVelocityX,
 };
 
@@ -82,7 +84,15 @@ function updateFrame() {
   context.clearRect(0, 0, board.width, board.height);
 
   context.fillStyle = "skyblue";
-  context.fillRect(player.x, player.y, player.width, player.height);
+  context.beginPath();
+  context.roundRect(
+    player.x,
+    player.y,
+    player.width,
+    player.height,
+    player.borderRadius
+  );
+  context.fill();
 
   context.fillStyle = "white";
   ball.x += ball.velocity[0] * deltaT;
