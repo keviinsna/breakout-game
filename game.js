@@ -7,6 +7,9 @@ let context;
 const boardWidth = 500;
 const boardHeight = 500;
 
+const background = new Image();
+background.src = "background.jpg";
+
 // ==============================================================
 // Player
 // ==============================================================
@@ -47,26 +50,36 @@ const ball = {
 // Blocks
 // ==============================================================
 let blockArray = [];
-let blockWidth = 50;
-let blockHeight = 10;
-let blockColumns = 8;
-let blockRows = 3;
+let blockWidth = 45;
+let blockHeight = 11;
+let blockColumns = 10;
+let blockRows = 7;
 let blockMaxRows = 10;
 let blockCount = 0;
 
 const blockX = 15;
 const blockY = 45;
 
+const colors = [
+  "#DC143C",
+  "#FF4500",
+  "#FFD700",
+  "#228B22",
+  "#2626F6",
+  "#8A2BE2",
+  "#00BFFF",
+];
+
 // ==============================================================
 // Game
 // ==============================================================
-
 window.onload = function () {
   board = document.getElementById("board");
   board.height = boardHeight;
   board.width = boardWidth;
 
   context = board.getContext("2d");
+  context.drawImage(background, 0, 0);
 
   // Draw player
   context.fillStyle = "skyblue";
@@ -82,6 +95,7 @@ window.onload = function () {
 function updateFrame() {
   requestAnimationFrame(updateFrame);
   context.clearRect(0, 0, board.width, board.height);
+  context.drawImage(background, 0, 0);
 
   context.fillStyle = "skyblue";
   context.beginPath();
@@ -123,9 +137,10 @@ function updateFrame() {
   }
 
   // Redraw blokcs
-  context.fillStyle = "lightgreen";
   for (let i = 0; i < blockArray.length; i++) {
     const block = blockArray[i];
+    context.fillStyle = block.color;
+    context.beginPath();
     if (!block.break) {
       if (topColision(ball, block) || bottomColision(ball, block)) {
         const normal = [0.0, 1.0];
@@ -138,7 +153,8 @@ function updateFrame() {
         block.break = true;
         blockCount -= 1;
       }
-      context.fillRect(block.x, block.y, block.width, block.height);
+      context.roundRect(block.x, block.y, block.width, block.height, 2);
+      context.fill();
     }
   }
 }
@@ -187,11 +203,12 @@ function createBlocks() {
   for (let c = 0; c < blockColumns; c++) {
     for (let r = 0; r < blockRows; r++) {
       let block = {
-        x: blockX + c * blockWidth + c * 10,
-        y: blockY + r * blockHeight + r * 10,
+        x: blockX + c * blockWidth + c * 3,
+        y: blockY + r * blockHeight + r * 3,
         width: blockWidth,
         height: blockHeight,
         break: false,
+        color: colors[r],
       };
       blockArray.push(block);
     }
