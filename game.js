@@ -46,7 +46,7 @@ let ball = {
   x: boardWidth / 2,
   y: boardHeight / 2,
   radius: ballRadius,
-  velocity: ballVelocity,
+  velocity: [...ballVelocity],
 };
 
 // ==============================================================
@@ -106,7 +106,7 @@ function updateFrame() {
   if (startGame) {
     context.fillStyle = "white";
     context.font = "20px sans-serif";
-    context.fillText('Press "space" to start the game.', 90, 400);
+    context.fillText('Press "space" to start the game.', 120, 400);
     return;
   }
 
@@ -132,6 +132,18 @@ function updateFrame() {
   context.beginPath();
   context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
   context.fill();
+
+  if (blockCount == 0) {
+    context.fillStyle = "white";
+    context.font = "20px sans-serif";
+    context.fillText(
+      "Congratulations! You have destroyed all blocks.",
+      50,
+      400
+    );
+    context.fillText('Press "space" to start the game.', 120, 430);
+    return;
+  }
 
   // Check board colisions
   if (ball.y - ball.radius <= 0) {
@@ -238,7 +250,7 @@ function createBlocks() {
 
 function resetGame(event) {
   if (event.code == "Space") {
-    if (gameOver) {
+    if (gameOver || blockCount == 0) {
       gameOver = false;
 
       player = {
