@@ -160,7 +160,7 @@ function updateFrame() {
   }
 
   // Check player colision
-  if (topColision(ball, player) || bottomColision(ball, player)) {
+  if (topColision(ball, player)) {
     const normal = [0.0, 1.0];
     ball.velocity = reflection(ball.velocity, normal);
   } else if (leftColision(ball, player) || rightColision(ball, player)) {
@@ -202,15 +202,20 @@ function movePlayer(event) {
 
 function detectColision(ball, block) {
   return (
-    ball.x - ball.radius < block.x + block.width &&
-    ball.x + ball.radius > block.x &&
-    ball.y - ball.radius < block.y + block.height &&
-    ball.y + ball.radius > block.y
+    ball.x - ball.radius < block.x + block.width && // direto
+    ball.x + ball.radius > block.x && // esquerdo
+    ball.y - ball.radius < block.y + block.height && // baixo'
+    ball.y + ball.radius > block.y // cima
   );
 }
 
 function topColision(ball, block) {
-  return detectColision(ball, block) && ball.y + ball.radius >= block.y;
+  return (
+    detectColision(ball, block) &&
+    ball.y + ball.radius >= block.y &&
+    ball.x - ball.radius > block.x &&
+    ball.x + ball.radius < block.x + block.width
+  );
 }
 
 function bottomColision(ball, block) {
@@ -221,12 +226,18 @@ function bottomColision(ball, block) {
 }
 
 function leftColision(ball, block) {
-  return detectColision(ball, block) && ball.x + ball.radius >= block.x;
+  return (
+    detectColision(ball, block) &&
+    ball.x + ball.radius > block.x &&
+    ball.y - ball.radius >= block.y
+  );
 }
 
 function rightColision(ball, block) {
   return (
-    detectColision(ball, block) && ball.x - ball.radius <= block.x + block.width
+    detectColision(ball, block) &&
+    ball.x - ball.radius < block.x + block.width &&
+    ball.y - ball.radius >= block.y
   );
 }
 
