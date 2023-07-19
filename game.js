@@ -37,13 +37,13 @@ let player = {
 // Ball
 // ==============================================================
 const ballRadius = 5;
-const ballVelocity = [2.5, 1.0];
+const ballVelocity = Math.round(Math.random()) ? [2.5, 1.0] : [-2.5, 1.0];
 const ballPosition = [boardWidth / 2.0, boardHeight / 2.0];
 // ΔT = Variação do tempo
 const deltaT = 1.5;
 
 let ball = {
-  x: boardWidth / 2,
+  x: Math.random() * 250 + 100,
   y: boardHeight / 2,
   radius: ballRadius,
   velocity: [...ballVelocity],
@@ -262,11 +262,15 @@ function resetGame(event) {
         velocityX: playerVelocityX,
       };
 
+      const pos = Math.random() * 250 + 100;
+      const r = Math.round(Math.random());
+      const radomVelocity = r ? [2.5, 1.0] : [-2.5, 1.0];
+
       ball = {
-        x: boardWidth / 2,
+        x: pos,
         y: boardHeight / 2,
         radius: ballRadius,
-        velocity: ballVelocity,
+        velocity: radomVelocity,
       };
 
       blockArray = [];
